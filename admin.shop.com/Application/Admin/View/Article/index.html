@@ -4,7 +4,7 @@
 </block>
 <block name="main">
     <h1>
-        <span class="action-span"><a href="{:U('add')}">添加文章分类</a></span>
+        <span class="action-span"><a href="{:U('add')}">添加文章</a></span>
         <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
         <span id="search_id" class="action-span1"> - {$meta_title} </span>
     </h1>
@@ -20,9 +20,10 @@
         <div class="list-div" id="listDiv">
             <table cellpadding="3" cellspacing="1">
                 <tr>
-                    <th width='55px'>文章分类编号  </th>
-                    <th>文章分类名称</th>
-                    <th>文章分类描述</th>
+                    <th width='55px'>文章编号  </th>
+                    <th>文章名称</th>
+                    <th>文章分类</th>
+                    <th>文章描述</th>
                     <th>排序</th>
                     <th>是否显示</th>
                     <th>操作</th>
@@ -31,6 +32,7 @@
                     <tr>
                         <td align="center">{$row.id}</td>
                         <td align="center">{$row.name}</td>
+                        <td align="center">{$row.category}</td>
                         <td align="center">{$row.intro}</td>
                         <td align="center">{$row.sort}</td>
                         <td align="center"><img src="__IMAGES__/is_show{$row.status}.gif"/></td>
@@ -40,6 +42,13 @@
                         </td>
                     </tr>
                 </foreach>
+                <tr>
+                    <td align="right" nowrap="true" colspan="7">
+                        <div class="page" style='float: right;'>
+                        {$page_html}
+                        </div>
+                    </td>
+                </tr>
             </table>
         </div>
     </form>

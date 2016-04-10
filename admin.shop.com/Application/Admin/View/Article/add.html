@@ -1,7 +1,7 @@
 <extend name="Layout:common"/>
 <block name="main">
 <h1>
-    <span class="action-span"><a href="{:U('index')}">文章分类管理</a></span>
+    <span class="action-span"><a href="{:U('index')}">文章管理</a></span>
     <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
     <span id="search_id" class="action-span1"> - {$meta_title} </span>
     <div style="clear:both"></div>
@@ -10,29 +10,39 @@
     <form method="post" action="{:U()}" enctype="multipart/form-data" >
         <table cellspacing="1" cellpadding="3" width="100%">
             <tr>
-                <td class="label">文章分类名称</td>
+                <td class="label">文章名称</td>
                 <td>
-                    <input type="text" name="name" maxlength="60" value="{$row.name}" />
+                    <input type="text" name="name" maxlength="60" value="{$row[0].name}" />
                     <span class="require-field">*</span>
                 </td>
             </tr>
             <tr>
-                <td class="label">文章分类描述</td>
+                <td class="label">文章分类</td>
                 <td>
-                    <textarea  name="intro" cols="60" rows="4" style='resize: none;'>{$row.intro}</textarea>
+                    <select name="article_category_id">
+                        <foreach name="categorys" item="category">
+                            <option value="{$category.id}">{$category.name}</option>
+                        </foreach>
+                        <option value="0">其他分类</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">文章描述</td>
+                <td>
+                    <textarea  name="intro" cols="60" rows="2" style='resize: none;'>{$row[0].intro}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">文章内容</td>
+                <td>
+                    <textarea  name="content" cols="60" rows="4">{$row[0].content}</textarea>
                 </td>
             </tr>
             <tr>
                 <td class="label">排序</td>
                 <td>
-                    <input type="text" name="sort" maxlength="40" size="15" value="{$row.sort|default=20}" />
-                </td>
-            </tr>
-            <tr>
-                <td class="label">是否帮助类</td>
-                <td>
-                    <input type="radio" name="is_help" value="1" /> 是
-                    <input type="radio" name="is_help" value="0"  /> 否
+                    <input type="text" name="sort" maxlength="40" size="15" value="{$row[0].sort|default=20}" />
                 </td>
             </tr>
             <tr>
@@ -45,7 +55,7 @@
             <tr>
                 <td></td>
                 <td>
-                    <input type="hidden" name='id'  value="{$row.id}" />
+                    <input type="hidden" name='id'  value="{$row[0].id}" />
                     <input type="submit" class="button" value=" 确定 " />
                     <input type="reset" class="button" value=" 重置 " />
                 </td>
@@ -58,8 +68,8 @@
     <js href='__JS__/jquery.min.js'/>
     <script type='text/javascript'>
         $(function(){
-            $(':input[name=status]').val([{$row.status|default=1}]);
-            $(':input[name=is_help]').val([{$row.is_help|default=0}]);
+            $(':input[name=status]').val([{$row[0].status|default=1}]);
+            $('option[value={$row[0].article_category_id}]').prop("selected","selected");
         });
     </script>
 </block>

@@ -34,23 +34,26 @@ class ArticleCategoryModel extends \Think\Model{
         $condition = $cond + array(
             'status' => array('gt',-1),
         );
-        //页面显示数据条数
-        $page_size = C('PAGE_SIZE');
-        //获取总条数
-        $total = $this->where($condition)->count();
-        //分页
-        $page_obj = new \Think\Page($total,$page_size);
-        $page_obj->setConfig('theme', C('PAGE_THEME'));
-        $page_html = $page_obj->show();
+//        //页面显示数据条数
+//        $page_size = C('PAGE_SIZE');
+//        //获取总条数
+//        $total = $this->where($condition)->count();
+//        //分页
+//        $page_obj = new \Think\Page($total,$page_size);
+//        $page_obj->setConfig('theme', C('PAGE_THEME'));
+//        $page_html = $page_obj->show();
         //查询
-        $rows = $this->where($condition)->order('sort')->page(I('get.p'),$page_size)->select();
-        return array(
-            'rows'=>$rows,
-            'page_html'=>$page_html,
-        );
+        $rows = $this->where($condition)->order('sort')->select();
+        return $rows;
+        //'page_html'=>$page_html,
         
     }
     
+    /**
+     * 删除文章分类
+     * 先确定分类下有无文章
+     * @return boolean
+     */
     public function deleteArticleCategory() {
         $id = I('get.id');
         //判断文章分类下有无文章

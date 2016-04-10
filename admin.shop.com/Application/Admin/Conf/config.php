@@ -44,4 +44,5 @@ return array(
     /* 分页 */
     'PAGE_SIZE' => 20,
     'PAGE_THEME' => '%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
+    'SHOW_PAGE_TRACE'=> TRUE,
 );
