@@ -117,7 +117,7 @@
 .shop_pic{width:80px;margin-right:10px;}
 .shop_pic .promin_mainpic{width:80px;height:60px;}
 .shop_pic .promin_mainpicn{width:80px;height:60px;}
-.promin_mainpicn img{width: expression(this.width > 80 && this.width/this.height > 1.3 ? 80 : true); height: expression(this.height >60 && this.width/this.height < 1.3 ? 60 : true);}
+.promin_mainpicn img{ width: expression(this.width > 80 && this.width/this.height > 1.3 ? 80 : true); height: expression(this.height >60 && this.width/this.height < 1.3 ? 60 : true);}
 
 .shop_name{line-height:18px;text-align:center;width:260px;margin-right:10px;padding-top:10px; padding-bottom:10px}
 .shop_color,.shop_nu,.shop_much,.shop_sum,.shop_oper{width:105px;}

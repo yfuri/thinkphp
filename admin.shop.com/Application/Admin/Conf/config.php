@@ -1,6 +1,7 @@
 <?php
 
 define('DOMAIN', 'http://admin.shop.com');
+define('YUN_DOMAIN', 'http://7xsv2x.com1.z0.glb.clouddn.com');
 return array(
     //'配置项'=>'配置值'
     /* 默认设定 */
@@ -40,9 +41,37 @@ return array(
         '__JS__' => DOMAIN . '/Public/Js',
         '__STYLES__' => DOMAIN . '/Public/Styles',
         '__IMAGES__' => DOMAIN . '/Public/Images',
+        '__UPLOADIFY__' => DOMAIN . '/Public/Ext/uploadify',
+        '__LAYER__' => DOMAIN . '/Public/Ext/layer',
+        '__ZTREE__' => DOMAIN . '/Public/Ext/ztree'
     ),
     /* 分页 */
     'PAGE_SIZE' => 20,
     'PAGE_THEME' => '%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
     'SHOW_PAGE_TRACE'=> TRUE,
+    
+    /*文件上传配置项*/
+    
+    'UPLOAD_SETTING' => array(
+//        'mimes'         =>  array(), //允许上传的文件MiMe类型
+        'maxSize'       =>  0, //上传的文件大小限制 (0-不做限制)
+        'exts'          =>  array('jpeg','png','jpg','gif'), //允许上传的文件后缀
+        'autoSub'       =>  true, //自动子目录保存文件
+        'subName'       =>  array('date', 'Y-m-d'), //子目录创建方式，[0]-函数名，[1]-参数，多个参数使用数组
+        'rootPath'      =>  './Public/Uploads/', //保存根路径
+        'savePath'      =>  '', //保存路径
+        'saveName'      =>  array('uniqid', ''), //上传文件命名规则，[0]-函数名，[1]-参数，多个参数使用数组
+        'saveExt'       =>  '', //文件保存后缀，空则使用原后缀
+        'replace'       =>  false, //存在同名是否覆盖
+        'hash'          =>  true, //是否生成hash编码
+        'callback'      =>  false, //检测文件是否存在回调，如果存在返回文件信息数组
+        'driver'        =>  'Qiniu', // 文件上传驱动
+        'driverConfig'  =>  array(
+            'secrectKey'     => 'smsv3dnuIMpw1FFLQTEhzABnZbtb4Pp9hhFFNTjK', //七牛密码
+            'accessKey'      => '-fm4rz7eqRxNISCvgxFO4kaTWNdoMI5gjtP3OU7Q', //七牛用户
+            'domain'         => YUN_DOMAIN, //七牛服务器
+            'bucket'         => 'thinkphp', //空间名称
+            'timeout'        => 300, //超时时间
+        ), // 上传驱动配置
+    ),
 );

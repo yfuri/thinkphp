@@ -1,7 +1,7 @@
 <extend name="Layout:common"/>
 <block name="main">
 <h1>
-    <span class="action-span"><a href="{:U('index')}">品牌管理</a></span>
+    <span class="action-span"><a href="{:U('index')}">商品分类管理</a></span>
     <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
     <span id="search_id" class="action-span1"> - {$meta_title} </span>
     <div style="clear:both"></div>
@@ -10,26 +10,24 @@
     <form method="post" action="{:U()}" enctype="multipart/form-data" >
         <table cellspacing="1" cellpadding="3" width="100%">
             <tr>
-                <td class="label">品牌名称</td>
+                <td class="label">商品分类名称</td>
                 <td>
                     <input type="text" name="name" maxlength="60" value="{$row.name}" />
                     <span class="require-field">*</span>
                 </td>
             </tr>
             <tr>
-                <td class="label">品牌描述</td>
+                <td class="label">父级分类</td>
                 <td>
-                    <textarea  name="intro" cols="60" rows="4" style='resize: none;'>{$row.intro}</textarea>
+                    <input type="hidden" name="parent_id" id="parent_id" value='{$row.parent_id}' />
+                    <input type="text" readonly="readonly" id="parent_name" value="{$category_name|default= '请选择'}"/>
+                    <ul class="ztree"></ul>
                 </td>
             </tr>
             <tr>
-                <td class="label">品牌LOGO</td>
+                <td class="label">商品分类描述</td>
                 <td>
-                    <input type="file" id="file_upload"/>
-                    <input type="hidden" name="logo" id="logo"/>
-                    <notempty name="row['logo']">
-                            <img src="{$row.logo}" id="logo_img" />
-                    </notempty>
+                    <textarea  name="intro" cols="60" rows="4" style='resize: none;'>{$row.intro}</textarea>
                 </td>
             </tr>
             <tr>
@@ -59,41 +57,44 @@
 </block>
 <block name='js'>
     <js href='__JS__/jquery.min.js'/>
-    <js href='__UPLOADIFY__/jquery.uploadify.min.js'/>
+    <js href='__ZTREE__/js/jquery.ztree.core.min.js'/>
     <script type='text/javascript'>
         $(function(){
             $(':input[name=status]').val([{$row.status|default=1}]);
-            //uploadify
-            $('#file_upload').uploadify({ 
-                'swf'      : '__UPLOADIFY__/uploadify.swf',    //指定上传控件的主体文件 
-                'uploader' : "{:U('Upload/upload')}" ,   //指定服务器端上传处理文件 
-                'buttonText' : "选择文件",
-                'fileObjName':'file',
-                'onUploadSuccess' : function(file_node,data){
-                    data = $.parseJSON(data);
-                    if(data.status){
-                        $('#logo').val(data.file_url);
-                        $('#logo_img').attr('src',data.yun_domain + '/' + data.file_url + '-200');
-                        layer.msg("上传成功");
-                    }else{
-                        layer.msg(data.msg,{icon:5});
+            $(':input[name=is_help]').val([{$row.is_help|default=0}]);
+                
+            //zTree
+            var setting = {
+                data : {
+                    simpleData : {
+                        enable : true,
+                        pIdKey:'parent_id'
+                    }
+                },
+                callback:{
+                    onClick : function(event,tree_id,tree_node){
+                        $('#parent_id').val(tree_node.id);
+                        $('#parent_name').val(tree_node.name);
                     }
                 }
-            }); 
-            
+                
+            };
+            var zNodes = {$categorys} ;
+            var zTree = $.fn.zTree.init($('.ztree'),setting,zNodes);
+            zTree.expandAll(true);
         });
     </script>
-    <js href="__LAYER__/layer.js"/>
 </block>
 <block name="css">
-    <css href="__UPLOADIFY__/uploadify.css"/>
+    <css href="__ZTREE__/css/zTreeStyle/zTreeStyle.css" />
     <style type="text/css">
-        .uploadify-button{
-            text-align:center;
-            position:relative;
-            cursor:pointer;
-            color:#fff;
-            background:#27ae60;
+        ul.ztree{
+              margin-top: 10px;
+              border:1px solid #617775;
+              background: #f0f6e4;
+              width: 150px;
+              overflow-x: auto;
+              overflow-y: scroll;
         }
     </style>
 </block>

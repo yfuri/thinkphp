@@ -8,11 +8,11 @@
 namespace Admin\Controller;
 
 /**
- * 品牌控制器
+ * 商品分类控制器
  *
  * @author Sunhong
  */
-class BrandController extends \Think\Controller{
+class GoodsCategoryController extends \Think\Controller{
     
     //保存模型
     protected $_model = null;
@@ -22,34 +22,34 @@ class BrandController extends \Think\Controller{
      */
     protected function _initialize() {
         $meta_titles = array(
-            'index' => "品牌管理",
-            'add' => '添加品牌',
-            'edit' => '修改品牌',
+            'index' => "商品分类管理",
+            'add' => '添加商品分类',
+            'edit' => '修改商品分类',
         );
         $meta_title = $meta_titles[ACTION_NAME];
         $this->assign('meta_title', $meta_title);
-        $this->_model = D('Brand');
+        $this->_model = D('GoodsCategory');
     }
 
     /**
-     * 品牌列表
+     * 商品分类列表
      */
     public function index() {
         //获取搜索关键字的功能
         $cond = array();
-        //模糊查询品牌的名字
+        //模糊查询商品分类的名字
         $keyword = I('get.keyword');
         if ($keyword) {
             $cond['name'] = array('like', '%' . $keyword . '%');
         }
         //查询数据
-        $result = $this->_model->getPageList($cond);
-        $this->assign($result);
+        $rows = $this->_model->getPageList($cond);
+        $this->assign('rows',$rows);
         $this->display();
     }
 
     /**
-     * 添加品牌
+     * 添加商品分类
      */
     public function add() {
         if (IS_POST) {
@@ -58,19 +58,20 @@ class BrandController extends \Think\Controller{
                 $this->error(get_error($this->_model->getError()));
             }
             //添加，跳转
-            if ($this->_model->add() === false) {
+            if ($this->_model->addGoodsCategory() === false) {
                 $this->error(get_error($this->_model->getError()));
             } else {
-                $this->success("添加品牌成功", U('index'));
+                $this->success("添加商品分类成功", U('index'));
             }
         } else {
+            $this->_action_bef();
             $this->display();
         }
     }
 
     /**
-     * 修改品牌
-     * @param integer $id 品牌唯一标识.
+     * 修改商品分类
+     * @param integer $id 商品分类唯一标识.
      */
     public function edit($id) {
         if (IS_POST) {
@@ -82,34 +83,41 @@ class BrandController extends \Think\Controller{
             if ($this->_model->save() === false) {
                 $this->error(get_error($this->_model->getError()));
             } else {
-                $this->success("修改品牌成功", U('index'));
+                $this->success("修改商品分类成功", U('index'));
             }
         } else {
             $row = $this->_model->find($id);
-            if($row['logo']){
-                $row['logo'] = YUN_DOMAIN . '/' . $row['logo'] . '-200';
+            //获取分类列表
+            $categorys = $this->_model->getPageList();
+            array_unshift($categorys,array('id'=>0,'name'=>'顶级分类','parent_id'=>0));
+            foreach ($categorys as $value) {
+                if($value['id'] == $row['parent_id']){
+                    $this->assign('category_name', $value['name']);
+                }
             }
             $this->assign('row', $row);
+            $this->_action_bef();
             $this->display('add');
         }
     }
 
     /**
-     * 删除品牌,逻辑删除
-     * @param type $id
+     * 删除商品分类,逻辑删除
      */
-    public function delete($id) {
-        $data = array(
-            'name' => array('exp',"CONCAT(name,'_del')"),
-            'status' => -1,
-            'id' => $id
-        );
-        //修改品牌状态为 -1 并在名称后加上 _del
-        if ($this->_model->save($data) === false) {
+    public function delete() {
+        //修改商品分类状态为 -1 并在名称后加上 _del
+        if ($this->_model->deleteArticleCategory() === false) {
             $this->error(get_error($this->_model->getError()));
         } else {
-            $this->success("删除品牌成功", U('index'));
+            $this->success("删除商品分类成功", U('index'));
         }
     }
-
+    
+    public function _action_bef() {
+        //获取分类列表
+        $categorys = $this->_model->getPageList();
+        array_unshift($categorys,array('id'=>0,'name'=>'顶级分类','parent_id'=>0));
+        $categorys = json_encode($categorys);
+        $this->assign("categorys",$categorys);
+    }
 }
