@@ -35,15 +35,9 @@ class GoodsCategoryController extends \Think\Controller{
      * 商品分类列表
      */
     public function index() {
-        //获取搜索关键字的功能
-        $cond = array();
-        //模糊查询商品分类的名字
-        $keyword = I('get.keyword');
-        if ($keyword) {
-            $cond['name'] = array('like', '%' . $keyword . '%');
-        }
+
         //查询数据
-        $rows = $this->_model->getPageList($cond);
+        $rows = $this->_model->getPageList();
         $this->assign('rows',$rows);
         $this->display();
     }
@@ -64,7 +58,7 @@ class GoodsCategoryController extends \Think\Controller{
                 $this->success("添加商品分类成功", U('index'));
             }
         } else {
-            $this->_action_bef();
+            $this->_before_view();
             $this->display();
         }
     }
@@ -75,28 +69,30 @@ class GoodsCategoryController extends \Think\Controller{
      */
     public function edit($id) {
         if (IS_POST) {
-            //获取数据
+            // 获取数据.
             if ($this->_model->create() === false) {
                 $this->error(get_error($this->_model->getError()));
             }
             //保存，跳转
-            if ($this->_model->save() === false) {
+            if ($this->_model->updateGoodsCategory() === false) {
                 $this->error(get_error($this->_model->getError()));
             } else {
                 $this->success("修改商品分类成功", U('index'));
             }
         } else {
             $row = $this->_model->find($id);
-            //获取分类列表
+            // 获取分类列表.
             $categorys = $this->_model->getPageList();
+            // 添加顶级分类.
             array_unshift($categorys,array('id'=>0,'name'=>'顶级分类','parent_id'=>0));
             foreach ($categorys as $value) {
                 if($value['id'] == $row['parent_id']){
                     $this->assign('category_name', $value['name']);
                 }
             }
+            // 传递数据，显示视图.
             $this->assign('row', $row);
-            $this->_action_bef();
+            $this->_before_view();
             $this->display('add');
         }
     }
@@ -106,17 +102,18 @@ class GoodsCategoryController extends \Think\Controller{
      */
     public function delete() {
         //修改商品分类状态为 -1 并在名称后加上 _del
-        if ($this->_model->deleteArticleCategory() === false) {
+        if ($this->_model->deleteGoodsCategory() === false) {
             $this->error(get_error($this->_model->getError()));
         } else {
             $this->success("删除商品分类成功", U('index'));
         }
     }
     
-    public function _action_bef() {
+    public function _before_view() {
         //获取分类列表
         $categorys = $this->_model->getPageList();
         array_unshift($categorys,array('id'=>0,'name'=>'顶级分类','parent_id'=>0));
+        // 将分类数组转换成json字符串
         $categorys = json_encode($categorys);
         $this->assign("categorys",$categorys);
     }

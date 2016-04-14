@@ -29,23 +29,14 @@ class GoodsCategoryModel extends \Think\Model{
      * @param array $cond 模糊查询条件
      * @return array
      */
-    public function getPageList(array $cond=array()) {
+    public function getPageList() {
         //查询条件
-        $condition = $cond + array(
-            'status' => array('gt',-1),
+        $condition = array(
+            'status' => array('gt',0),
         );
-//        //页面显示数据条数
-//        $page_size = C('PAGE_SIZE');
-//        //获取总条数
-//        $total = $this->where($condition)->count();
-//        //分页
-//        $page_obj = new \Think\Page($total,$page_size);
-//        $page_obj->setConfig('theme', C('PAGE_THEME'));
-//        $page_html = $page_obj->show();
         //查询
-        $rows = $this->where($condition)->order('sort')->select();
+        $rows = $this->where($condition)->order('lft')->select();
         return $rows;
-        //'page_html'=>$page_html,
         
     }
     
@@ -56,25 +47,64 @@ class GoodsCategoryModel extends \Think\Model{
      */
     public function deleteGoodsCategory() {
         $id = I('get.id');
-        //判断商品分类下有无商品
-        if(M('Goods')->getbyGoodsCategoryId($id) !== false){
-            $this->error = '不能删除有商品的商品分类';
-            return FALSE;
-        }
-        $data = array(
-            'name' => array('exp',"CONCAT(name,'_del')"),
-            'status' => -1,
-            'id' => $id
+//        //判断商品分类下有无商品
+//        if(M('Goods')->getbyGoodsCategoryId($id) !== false){
+//            $this->error = '不能删除有商品的商品分类';
+//            return FALSE;
+//        }
+//        $data = array(
+//            'name' => array('exp',"CONCAT(name,'_del')"),
+//            'status' => -1,
+//            'id' => $id
+//        );
+//        //修改商品分类状态为 -1 并在名称后加上 _del
+//        if($this->save($data) === false){
+//            $this->error = '删除失败';
+//            return FALSE;
+//        }
+//        return TRUE;
+        //获取到所有的后代分类
+        //获取当前分类的左右节点
+        $category = $this->where(array('id'=>$id))->getField('id,lft,rght');
+        $cond = array(
+            'lft'=>array('egt',$category[$id]['lft']),
+            'rght'=>array('elt',$category[$id]['rght']),
         );
-        //修改商品分类状态为 -1 并在名称后加上 _del
-        if($this->save($data) === false){
-            $this->error = '删除失败';
-            return FALSE;
-        }
-        return TRUE;
+        return $this->where($cond)->save(array('name'=>array('exp',"CONCAT(name,'_del')"),'status'=>0));
     }
     
+    /**
+     * 添加商品分类，使用nestedsets计算节点和层级
+     * @return type
+     */
     public function addGoodsCategory() {
-        return $this->add();
+        //实例化DbMysqlLogic
+        $mysql_db = D('DbMysql','Logic');
+        //实例化nestedsets
+        $nestedsets = new \Admin\Service\NestedSets($mysql_db, $this->trueTableName, 'lft', 'rght', 'parent_id', 'id', 'level');
+        return $nestedsets->insert($this->data['parent_id'], $this->data, 'bottom');
+    }
+    
+    /**
+     * 修改商品分类
+     * @return boolean
+     */
+    public function updateGoodsCategory() {
+        //如果没有修改父级分类,就不需要计算节点和层级
+        //获取原来的父级节点
+        $parent_id = $this->getFieldById($this->data['id'],'parent_id');
+        if($parent_id != $this->data['parent_id']){
+            //重新计算左右节点和层级
+            //实例化nestedsets
+             $mysql_db = D('DbMysql','Logic');
+            //实例化nestedsets
+            $nestedsets = new \Admin\Service\NestedSets($mysql_db, $this->trueTableName, 'lft', 'rght', 'parent_id', 'id', 'level');
+            //执行移动的方法
+            if($nestedsets->moveUnder($this->data['id'], $this->data['parent_id'], 'bottom')===false){
+                $this->error = '不能将当前分类移动到其后代分类';
+                return false;
+            }
+        }
+        return $this->save();
     }
 }

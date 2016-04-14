@@ -43,7 +43,8 @@ return array(
         '__IMAGES__' => DOMAIN . '/Public/Images',
         '__UPLOADIFY__' => DOMAIN . '/Public/Ext/uploadify',
         '__LAYER__' => DOMAIN . '/Public/Ext/layer',
-        '__ZTREE__' => DOMAIN . '/Public/Ext/ztree'
+        '__ZTREE__' => DOMAIN . '/Public/Ext/ztree',
+        '__TREEGRID__' => DOMAIN . '/Public/Ext/treegrid'
     ),
     /* 分页 */
     'PAGE_SIZE' => 20,
