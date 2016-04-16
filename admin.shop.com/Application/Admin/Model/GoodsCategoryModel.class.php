@@ -31,22 +31,6 @@ class GoodsCategoryModel extends \Think\Model{
      */
     public function deleteGoodsCategory() {
         $id = I('get.id');
-//        //判断商品分类下有无商品
-//        if(M('Goods')->getbyGoodsCategoryId($id) !== false){
-//            $this->error = '不能删除有商品的商品分类';
-//            return FALSE;
-//        }
-//        $data = array(
-//            'name' => array('exp',"CONCAT(name,'_del')"),
-//            'status' => -1,
-//            'id' => $id
-//        );
-//        //修改商品分类状态为 -1 并在名称后加上 _del
-//        if($this->save($data) === false){
-//            $this->error = '删除失败';
-//            return FALSE;
-//        }
-//        return TRUE;
         //获取到所有的后代分类
         //获取当前分类的左右节点
         $category = $this->where(array('id'=>$id))->getField('id,lft,rght');
@@ -62,10 +46,14 @@ class GoodsCategoryModel extends \Think\Model{
      * @return type
      */
     public function addGoodsCategory() {
+        dump($this->data['parent_id']);
+        dump($this->data);
+        exit;
         //实例化DbMysqlLogic
         $mysql_db = D('DbMysql','Logic');
         //实例化nestedsets
         $nestedsets = new \Admin\Service\NestedSets($mysql_db, $this->trueTableName, 'lft', 'rght', 'parent_id', 'id', 'level');
+        
         return $nestedsets->insert($this->data['parent_id'], $this->data, 'bottom');
     }
     

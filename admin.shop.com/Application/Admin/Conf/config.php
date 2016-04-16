@@ -4,6 +4,8 @@ define('DOMAIN', 'http://admin.shop.com');
 define('YUN_DOMAIN', 'http://7xsv2x.com1.z0.glb.clouddn.com');
 return array(
     //'配置项'=>'配置值'
+    /*关闭字段缓存*/
+//    'DB_FIELDS_CACHE' => false,
     /* 默认设定 */
     'DEFAULT_M_LAYER' => 'Model', // 默认的模型层名称
     'DEFAULT_C_LAYER' => 'Controller', // 默认的控制器层名称

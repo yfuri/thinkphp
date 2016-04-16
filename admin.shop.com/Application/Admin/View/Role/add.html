@@ -1,0 +1,123 @@
+<extend name="Layout:common"/>
+<block name="main">
+<h1>
+    <span class="action-span"><a href="{:U('index')}">角色管理</a></span>
+    <span class="action-span1"><a href="#">ECSHOP 管理中心</a></span>
+    <span id="search_id" class="action-span1"> - {$meta_title} </span>
+    <div style="clear:both"></div>
+</h1>
+<div class="main-div">
+    <form method="post" action="{:U()}" enctype="multipart/form-data" >
+        <table cellspacing="1" cellpadding="3" width="100%">
+            <tr>
+                <td class="label">角色名称</td>
+                <td>
+                    <input type="text" name="name" maxlength="60" value="{$row.name}" />
+                    <span class="require-field">*</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">关联权限</td>
+                <td>
+                    <div id="permsBox">
+                    </div>
+                    <ul class="ztree"></ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">角色描述</td>
+                <td>
+                    <textarea  name="intro" cols="60" rows="4" style='resize: none;'>{$row.intro}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">排序</td>
+                <td>
+                    <input type="text" name="sort" maxlength="40" size="15" value="{$row.sort|default=20}" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label">是否显示</td>
+                <td>
+                    <input type="radio" name="status" value="1" /> 是
+                    <input type="radio" name="status" value="0"  /> 否
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="hidden" name='id'  value="{$row.id}" />
+                    <input type="submit" class="button" value=" 确定 " />
+                    <input type="reset" class="button" value=" 重置 " />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+</block>
+<block name='js'>
+    <js href='__JS__/jquery.min.js'/>
+    <js href='__ZTREE__/js/jquery.ztree.core.min.js'/>
+    <js href='__ZTREE__/js/jquery.ztree.excheck.min.js'/>
+    <script type='text/javascript'>
+        $(function(){
+            $(':input[name=status]').val([{$row.status|default=1}]);
+            $(':input[name=is_help]').val([{$row.is_help|default=0}]);
+                
+            //zTree
+            var setting = {
+                check:{enable:true,chkboxType:{ "Y" : "s", "N" : "s" },},
+                data : {  
+                    simpleData : {
+                        enable : true,
+                        pIdKey:'parent_id'
+                    }
+                },
+                callback:{
+                    onCheck:function(){
+                        var checked_nodes = zTree.getCheckedNodes(true);
+                        perms_node.empty();
+                        $(checked_nodes).each(function(){
+                            var half_check = this.getCheckStatus();
+                            if(!half_check.half){
+                                var html = '<input type="hidden" name="perms[]" value="' + this.id + '"/>';
+                                $(html).appendTo(perms_node);
+                            }
+                        });
+                    },
+                }
+                
+            };
+            var perms_node = $('#permsBox');
+            var zNodes = {$permissions} ;
+            var zTree = $.fn.zTree.init($('.ztree'),setting,zNodes);
+            zTree.expandAll(true);
+            <notempty name="row">
+            var perms = {$row.permission_ids};
+            for(i in perms){
+                var node = zTree.getNodeByParam("id",perms[i]);
+                zTree.checkNode(node,true);
+                var half_check = node.getCheckStatus();
+                //将半选状态的选项忽略
+                if(!half_check.half){
+                    var html = '<input type="hidden" name="perms[]" value="' + perms[i] + '"/>';
+                    $(html).appendTo(perms_node);
+                }
+            }
+            </notempty>
+        });
+    </script>
+</block>
+<block name="css">
+    <css href="__ZTREE__/css/zTreeStyle/zTreeStyle.css" />
+    <style type="text/css">
+        ul.ztree{
+              margin-top: 10px;
+              border:1px solid #617775;
+              background: #f0f6e4;
+              width: 200px;
+              overflow-x: auto;
+              overflow-y: scroll;
+        }
+    </style>
+</block>
