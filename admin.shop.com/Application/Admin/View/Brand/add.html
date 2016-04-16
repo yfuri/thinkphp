@@ -73,7 +73,7 @@
                     data = $.parseJSON(data);
                     if(data.status){
                         $('#logo').val(data.file_url);
-                        $('#logo_img').attr('src',data.yun_domain + '/' + data.file_url + '-200');
+                        $('#logo_img').attr('src','__YUN_DOMAIN__/' + data.file_url + '-200');
                         layer.msg("上传成功");
                     }else{
                         layer.msg(data.msg,{icon:5});
@@ -88,12 +88,5 @@
 <block name="css">
     <css href="__UPLOADIFY__/uploadify.css"/>
     <style type="text/css">
-        .uploadify-button{
-            text-align:center;
-            position:relative;
-            cursor:pointer;
-            color:#fff;
-            background:#27ae60;
-        }
     </style>
 </block>

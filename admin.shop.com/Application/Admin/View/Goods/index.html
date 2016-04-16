@@ -1,0 +1,86 @@
+<extend name='Layout:common'/>
+<block name='css'>
+    <css href='__STYLES__/page.css'/>
+</block>
+<block name='main'>
+    <h1>
+        <span class="action-span"><a href="{:U('add')}">添加新商品</a></span>
+        <span class="action-span1"><a href="{:U('Index/main')}">ECSHOP 管理中心</a></span>
+        <span id="search_id" class="action-span1"> - {$meta_title} </span>
+        <div style="clear:both"></div>
+    </h1>
+    <div class="form-div">
+        <form action="" name="searchForm">
+            <img src="__IMAGES__/icon_search.gif" width="26" height="22" border="0" alt="search" />
+            <!-- 分类 -->
+            分类
+            {:oneArray2select($categories,'category_id',I('get.category_id'))}
+            <!-- 品牌 -->
+            &nbsp;&nbsp;品牌
+            {:oneArray2select($brands,'brand_id',I('get.brand_id'))}
+            <!-- 供货商 -->
+            &nbsp;&nbsp;供货商
+            {:oneArray2select($suppliers,'supplier_id',I('get.supplier_id'))}
+            <!-- 推荐 -->
+            &nbsp;&nbsp;推荐
+            {:oneArray2select($status,'goods_status',I('get.goods_status'))}
+            <!-- 上架 -->
+            &nbsp;&nbsp;上架
+            {:oneArray2select($is_on_sales,'is_on_sale',I('get.is_on_sale'))}
+            <!-- 关键字 -->
+            &nbsp;&nbsp;
+            关键字 <input type="text" name="keyword" size="15" value='{:I("get.keyword")}'/>
+            <input type="submit" value=" 搜索 " class="button" />
+        </form>
+    </div>
+
+    <!-- 商品列表 -->
+    <form method="post" action="" name="listForm" onsubmit="">
+        <div class="list-div" id="listDiv">
+            <table cellpadding="3" cellspacing="1">
+                <tr>
+                    <th>编号</th>
+                    <th>商品名称</th>
+                    <th>货号</th>
+                    <th>商品分类</th>
+                    <th>品牌</th>
+                    <th>供货商</th>
+                    <th>价格</th>
+                    <th>上架</th>
+                    <th>精品</th>
+                    <th>新品</th>
+                    <th>热销</th>
+                    <th>推荐排序</th>
+                    <th>库存</th>
+                    <th>操作</th>
+                </tr>
+                <foreach name="rows" item="row">
+                    <tr>
+                        <td align="center">{$row.id}</td>
+                        <td align="center" class="first-cell"><span>{$row.name}</span></td>
+                        <td align="center"><span onclick="">{$row.sn}</span></td>
+                        <td align="center"><span>{$categories[$row['goods_category_id']]}</span></td>
+                        <td align="center"><span>{$brands[$row['brand_id']]}</span></td>
+                        <td align="center"><span>{$suppliers[$row['supplier_id']]}</span></td>
+                        <td align="center"><span>{$row.shop_price}</span></td>
+                        <td align="center"><img src="__IMAGES__/is_show{$row.is_on_sale}.gif"/></td>
+                        <td align="center"><img src="__IMAGES__/is_show{$row.is_best}.gif"/></td>
+                        <td align="center"><img src="__IMAGES__/is_show{$row.is_new}.gif"/></td>
+                        <td align="center"><img src="__IMAGES__/is_show{$row.is_hot}.gif"/></td>
+                        <td align="center">{$row.sort}</td>
+                        <td align="center">{$row.stock}</td>
+                        <td align="center">
+                            <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑"><img src="__IMAGES__/icon_edit.gif" width="16" height="16" border="0" /></a>
+                            <a href="{:U('delete',array('id'=>$row['id']))}" onclick="" title="删除"><img src="__IMAGES__/icon_trash.gif" width="16" height="16" border="0" /></a></td>
+                    </tr>
+                </foreach>
+            </table>
+
+            <!-- 分页开始 -->
+            <div class='page'>
+                {$page_html}
+            </div>
+            <!-- 分页结束 -->
+        </div>
+    </form>
+</block>

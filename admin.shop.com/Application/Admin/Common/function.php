@@ -24,6 +24,54 @@ function get_error($errors){
 }
 
 /**
+ * 将一个二维数组转为一个下拉列表
+ * @param Array $data
+ * @param String $name
+ * @param String $value_field
+ * @param String $name_field
+ * @param String $select
+ * @return string
+ */
+function array2select($data,$name,$value_field = 'id',$name_field = 'name',$select=''){
+    $html = '<select name="'.$name.'">';
+    $html .= '<option value="0">请选择...</option>';
+    foreach ($data as $value) {
+        if($value[$value_field] == $select){
+            $html .= '<option value="'.$value[$value_field].'" selected="selected">' .$value[$name_field]. '</option>';
+        }else{
+            $html .= '<option value="'.$value[$value_field].'">'.$value[$name_field].'</option>';
+        }
+    }
+    $html .= '</select>';
+    return $html;
+}
+
+/**
+ * 将一个一维数组转为一个下拉列表
+ * @param Array $data
+ * @param String $name
+ * @param String $value_field
+ * @param String $name_field
+ * @param String $select
+ * @return string
+ */
+function oneArray2select($data,$name,$select=''){
+    $html = '<select name="'.$name.'">';
+    $html .= '<option value="0">请选择...</option>';
+    foreach ($data as $key=>$value) {
+        $key = (String)$key;
+        if($key == $select){
+            $html .= '<option value="'.$key.'" selected="selected">' .$value. '</option>';
+        }else{
+            $html .= '<option value="'.$key.'">'.$value.'</option>';
+        }
+    }
+    $html .= '</select>';
+    return $html;
+}
+
+
+/**
  * 验证昵称
  * @param String $nickname
  * @return boolean

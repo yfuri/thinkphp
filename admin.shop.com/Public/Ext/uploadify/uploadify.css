@@ -1,81 +1,36 @@
-/*
-Uploadify
-Copyright (c) 2012 Reactive Apps, Ronnie Garcia
-Released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
-*/
 
-.uploadify {
-	position: relative;
-	margin-bottom: 1em;
-}
+/* = uploadify上传插件样式
+------------------------------------------ */
 .uploadify-button {
-	background-color: #505050;
-	background-image: linear-gradient(bottom, #505050 0%, #707070 100%);
-	background-image: -o-linear-gradient(bottom, #505050 0%, #707070 100%);
-	background-image: -moz-linear-gradient(bottom, #505050 0%, #707070 100%);
-	background-image: -webkit-linear-gradient(bottom, #505050 0%, #707070 100%);
-	background-image: -ms-linear-gradient(bottom, #505050 0%, #707070 100%);
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0, #505050),
-		color-stop(1, #707070)
-	);
-	background-position: center top;
-	background-repeat: no-repeat;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
-	border-radius: 30px;
-	border: 2px solid #808080;
-	color: #FFF;
-	font: bold 12px Arial, Helvetica, sans-serif;
+	position: relative;
 	text-align: center;
-	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
-	width: 100%;
-}
-.uploadify:hover .uploadify-button {
-	background-color: #606060;
-	background-image: linear-gradient(top, #606060 0%, #808080 100%);
-	background-image: -o-linear-gradient(top, #606060 0%, #808080 100%);
-	background-image: -moz-linear-gradient(top, #606060 0%, #808080 100%);
-	background-image: -webkit-linear-gradient(top, #606060 0%, #808080 100%);
-	background-image: -ms-linear-gradient(top, #606060 0%, #808080 100%);
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0, #606060),
-		color-stop(1, #808080)
-	);
-	background-position: center bottom;
-}
-.uploadify-button.disabled {
-	background-color: #D0D0D0;
-	color: #808080;
-}
-.uploadify-queue {
-	margin-bottom: 1em;
+	color: #fff;
+	cursor: pointer;
+	background-color: #27ae60;
 }
 .uploadify-queue-item {
-	background-color: #F5F5F5;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	font: 11px Verdana, Geneva, sans-serif;
-	margin-top: 5px;
-	max-width: 350px;
-	padding: 10px;
+	position: absolute;
+	margin-top: 4px;
+	padding: 15px;
+	width: 470px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+}
+.uploadify-queue-item .cancel {
+	float: right;
+}
+.uploadify-queue-item .cancel a,
+.uploadify-queue-item .cancel a:hover {
+	font-family: Consolas;
+	color: #404040;
+	text-decoration: none;
+	border-bottom: 0 none;
+}
+.uploadify-queue-item .fileName {
+	color: #2D7200;
 }
 .uploadify-error {
 	background-color: #FDE5DD !important;
-}
-.uploadify-queue-item .cancel a {
-	background: url('../img/uploadify-cancel.png') 0 0 no-repeat;
-	float: right;
-	height:	16px;
-	text-indent: -9999px;
-	width: 16px;
 }
 .uploadify-queue-item.completed {
 	background-color: #E5E5E5;
@@ -89,4 +44,63 @@ Released under the MIT License <http://www.opensource.org/licenses/mit-license.p
 	background-color: #0099FF;
 	height: 3px;
 	width: 1px;
+}
+.upload-img-box {
+	margin-top: 4px;
+}
+.upload-img-box .upload-pre-item {
+	padding: 1px;
+	width: 120px;
+	max-height: 120px;
+	overflow: hidden;
+	text-align: center;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	transition: all .3s linear;
+}
+.upload-img-box .upload-pre-item img {
+	vertical-align: top;
+}
+.upload-img-box .upload-pre-file {
+	padding: 0 10px;
+	width: 380px;
+	height: 35px;
+	line-height: 35px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	border: 1px dashed #ccc;
+	background-color: #fff;
+}
+/* 上传图片点击弹出层 */
+.upload-img-popup {
+	position: fixed;
+	z-index: 9999;
+	padding: 3px;
+	border: 1px solid #c3c3c3;
+	background-color: #fff;
+	box-shadow: 0 0 4px rgba(0,0,0,.5);
+}
+.upload-img-popup .close-pop {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	width: 17px;
+	height: 17px;
+	background: url(../images/bg_icon.png) no-repeat -25px 0;
+}
+.upload-img-popup .close-pop:hover {
+	text-decoration: none;
+	border-bottom: 0 none;
+}
+.upload-img-popup img {
+	display: block;
+}
+.upload_icon_all {
+	width: 15px;
+	height: 15px;
+	background: url(../images/attachment_1.png);
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px
 }

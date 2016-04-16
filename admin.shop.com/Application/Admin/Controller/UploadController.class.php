@@ -28,7 +28,6 @@ class UploadController extends \Think\Controller{
             'status' => $file_info?1:0,
             'file_url' => $file_url,
             "msg" => $upload->getError(),
-            'yun_domain' => $config['driverConfig']['domain']
         );
         $this->ajaxReturn($data);
     }

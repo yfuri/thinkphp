@@ -37,7 +37,7 @@ class GoodsCategoryController extends \Think\Controller{
     public function index() {
 
         //查询数据
-        $rows = $this->_model->getPageList();
+        $rows = $this->_model->getList();
         $this->assign('rows',$rows);
         $this->display();
     }
@@ -82,7 +82,7 @@ class GoodsCategoryController extends \Think\Controller{
         } else {
             $row = $this->_model->find($id);
             // 获取分类列表.
-            $categorys = $this->_model->getPageList();
+            $categorys = $this->_model->getList();
             // 添加顶级分类.
             array_unshift($categorys,array('id'=>0,'name'=>'顶级分类','parent_id'=>0));
             foreach ($categorys as $value) {
@@ -111,7 +111,7 @@ class GoodsCategoryController extends \Think\Controller{
     
     public function _before_view() {
         //获取分类列表
-        $categorys = $this->_model->getPageList();
+        $categorys = $this->_model->getList();
         array_unshift($categorys,array('id'=>0,'name'=>'顶级分类','parent_id'=>0));
         // 将分类数组转换成json字符串
         $categorys = json_encode($categorys);

@@ -44,7 +44,9 @@ return array(
         '__UPLOADIFY__' => DOMAIN . '/Public/Ext/uploadify',
         '__LAYER__' => DOMAIN . '/Public/Ext/layer',
         '__ZTREE__' => DOMAIN . '/Public/Ext/ztree',
-        '__TREEGRID__' => DOMAIN . '/Public/Ext/treegrid'
+        '__TREEGRID__' => DOMAIN . '/Public/Ext/treegrid',
+        '__UEDITOR__' => DOMAIN . '/Public/Ext/ueditor',
+        '__YUN_DOMAIN__' => YUN_DOMAIN
     ),
     /* 分页 */
     'PAGE_SIZE' => 20,

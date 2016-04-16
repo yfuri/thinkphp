@@ -25,7 +25,7 @@ class BrandModel extends \Think\Model{
     );
     
     /**
-     * 查询
+     * 查询,分页,条件查询
      * @param array $cond 模糊查询条件
      * @return array
      */
@@ -48,6 +48,13 @@ class BrandModel extends \Think\Model{
             'rows'=>$rows,
             'page_html'=>$page_html,
         );
-        
+    }
+    
+    /**
+     * 获取所有可用品牌
+     * @return type
+     */
+    public function getList($fileds = '*') {
+        return $this->field($fileds)->where(array('status' => 1))->select();
     }
 }

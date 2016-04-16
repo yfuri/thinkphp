@@ -25,22 +25,6 @@ class GoodsCategoryModel extends \Think\Model{
     );
     
     /**
-     * 查询
-     * @param array $cond 模糊查询条件
-     * @return array
-     */
-    public function getPageList() {
-        //查询条件
-        $condition = array(
-            'status' => array('gt',0),
-        );
-        //查询
-        $rows = $this->where($condition)->order('lft')->select();
-        return $rows;
-        
-    }
-    
-    /**
      * 删除商品分类
      * 先确定分类下有无商品
      * @return boolean
@@ -106,5 +90,13 @@ class GoodsCategoryModel extends \Think\Model{
             }
         }
         return $this->save();
+    }
+    
+    /**
+     * 获取所有可用品牌
+     * @return type
+     */
+    public function getList($fileds = '*') {
+        return $this->field($fileds)->where(array('status' => 1))->order('lft')->select();
     }
 }
