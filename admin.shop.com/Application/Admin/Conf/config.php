@@ -4,8 +4,6 @@ define('DOMAIN', 'http://admin.shop.com');
 define('YUN_DOMAIN', 'http://7xsv2x.com1.z0.glb.clouddn.com');
 return array(
     //'配置项'=>'配置值'
-    /*关闭字段缓存*/
-//    'DB_FIELDS_CACHE' => false,
     /* 默认设定 */
     'DEFAULT_M_LAYER' => 'Model', // 默认的模型层名称
     'DEFAULT_C_LAYER' => 'Controller', // 默认的控制器层名称
@@ -31,7 +29,7 @@ return array(
     'DB_PREFIX' => '', // 数据库表前缀
     'DB_PARAMS' => array(), // 数据库连接参数    
     'DB_DEBUG' => TRUE, // 数据库调试模式 开启后可以记录SQL日志
-    'DB_FIELDS_CACHE' => true, // 启用字段缓存
+    'DB_FIELDS_CACHE' => false, // 启用字段缓存
     'DB_CHARSET' => 'utf8', // 数据库编码默认采用utf8
     'DB_DEPLOY_TYPE' => 0, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
     'DB_RW_SEPARATE' => false, // 数据库读写是否分离 主从式有效
@@ -79,4 +77,15 @@ return array(
             'timeout'        => 300, //超时时间
         ), // 上传驱动配置
     ),
+    
+    /* 忽略检测权限路径列表 */
+    'IGNORE_SETTING' => array(
+            'Admin/Admin/login',
+            'Admin/Index/index',
+            'Admin/Index/top',
+            'Admin/Index/main',
+            'Admin/Index/menu',
+            'Admin/Verify/verify',
+        ),
+    
 );

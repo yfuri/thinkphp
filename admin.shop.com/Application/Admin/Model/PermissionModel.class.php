@@ -27,7 +27,6 @@ class PermissionModel extends \Think\Model{
      * @return boolean
      */
     public function addPermission() {
-        $this->data['path'] = str_replace('\\', '\\\\', $this->data['path']);
         unset($this->data['id']);
         $nestedsets = $this->_get_nestedsets();
         //执行插入操作
