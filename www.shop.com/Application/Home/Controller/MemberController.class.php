@@ -70,4 +70,24 @@ class MemberController extends \Think\Controller{
             echo '发送失败';
         }
     }
+    
+    /**
+     * 激活账号
+     * @param type $mail
+     * @param type $token
+     */
+    public function activate($mail,$token) {
+        $cond = [
+            'email'=>$mail,
+            'token'=>$token,
+            'send_time'=>['egt',NOW_TIME - 86400],//send_time + 86400 > now_time
+        ];
+        if(!$this->_model->where($cond)->count()){
+            $this->error('验证失败',U('register'));
+        }
+        if($this->_model->where($cond)->setField(['status'=>1,'token'=>'','send_time'=>0])===false){
+            $this->error('激活失败',U('login'));
+        }
+        $this->success('激活成功,请登录',U('login'));
+    }
 }

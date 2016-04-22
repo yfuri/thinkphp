@@ -31,7 +31,8 @@ class MemberModel extends \Think\Model{
         array('tel', 'check_tel', '手机号码必填', self::EXISTS_VALIDATE, 'callback', self::MODEL_INSERT),
         array('tel', '', '手机号码已被存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_INSERT),
         array('captcha','checkPhoneCode','手机验证码不正确',self::EXISTS_VALIDATE,'callback',self::MODEL_INSERT),
-        array('checkcode', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback', 'login'),
+        array('checkcode', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback'),
+
 //        array('username', 'require', '用户名必填', self::MUST_VALIDATE, '', 'login'),
 //        array('password', 'require', '密码必填', self::MUST_VALIDATE, '', 'login'),
 //        array('captcha', 'require', '验证码必填', self::MUST_VALIDATE, '', 'login'),
@@ -43,7 +44,7 @@ class MemberModel extends \Think\Model{
      * @var type 
      */
     protected $_auto     = array(
-        array('salt', '\Org\Util\String::randString', self::MODEL_INSERT, 'function', 6),
+        array('salt', '\Org\Util\String::randString', self::MODEL_INSERT, 'function'),
         array('add_time', NOW_TIME, self::MODEL_INSERT),
     );
     
@@ -52,13 +53,48 @@ class MemberModel extends \Think\Model{
      */
     public function register() {
         $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
-        if ($this->add() === false) {
+        $member_mail = $this->data['email'];
+        if (($member_id = $this->add()) === false) {
             return false;
+        }
+        // 发送激活邮件
+        if($this->_send_activate_mail($member_id,$member_mail) === false){
+            return FALSE;
         }
         return true;
     }
     
     /**
+     * 发送激活邮件
+     * @param type $member_id
+     * @param type $member_mail
+     * @return boolean
+     */
+    private function _send_activate_mail($member_id,$member_mail){
+        $token = \Org\Util\String::randString(40);
+        $url = DOMAIN.'/'.U('Member/activate',array('mail'=>$member_mail,'token'=>$token));
+        $mail_body = <<<BODY
+                <a href="$url">点我激活</a><br />如果没有跳转,请点击下面的地址或复制到地址栏进入激活<br />
+                $url
+BODY;
+        $subject = "欢迎你加入我们";
+        $data = array(
+            'id' => $member_id,
+            'token' => $token,
+            'send_time' => NOW_TIME 
+        );
+        if(sendMail($member_mail, $subject, $mail_body) === false){
+            $this->error = '激活邮件发送失败';
+            return FALSE;
+        }
+        if($this->save($data) === false){
+            return FALSE;
+        }
+        
+        return true;
+    }
+
+        /**
      * 验证验证码
      * @param type $code
      * @return bool

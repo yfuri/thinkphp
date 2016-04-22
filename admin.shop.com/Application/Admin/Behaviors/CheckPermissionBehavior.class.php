@@ -20,14 +20,14 @@ class CheckPermissionBehavior extends \Think\Behavior{
         $ignore = C('IGNORE_SETTING');
             
         // 检测用户是否有权限访问该路径
-        if(!in_array($url, $ignore)){
-            $userinfo = session('USERINFO');
-            if(!$userinfo){
-                if (D('Admin')->autoLogin()){
-                    $userinfo = session('USERINFO');
-                    
-                }
+        $userinfo = session('USERINFO');
+        if(!$userinfo){
+            if (D('Admin')->autoLogin()){
+                $userinfo = session('USERINFO');
+
             }
+        }
+        if(!in_array($url, $ignore)){
             //判断是否是超级管理员
             if ($userinfo) {
                 //如果发现是超级管理员用户,就可以操作任何请求
