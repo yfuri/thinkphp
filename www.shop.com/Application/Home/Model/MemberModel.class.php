@@ -31,12 +31,12 @@ class MemberModel extends \Think\Model{
         array('tel', 'check_tel', '手机号码必填', self::EXISTS_VALIDATE, 'callback', self::MODEL_INSERT),
         array('tel', '', '手机号码已被存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_INSERT),
         array('captcha','checkPhoneCode','手机验证码不正确',self::EXISTS_VALIDATE,'callback',self::MODEL_INSERT),
-        array('checkcode', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback'),
+        array('checkcode', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback',self::MODEL_INSERT),
 
-//        array('username', 'require', '用户名必填', self::MUST_VALIDATE, '', 'login'),
-//        array('password', 'require', '密码必填', self::MUST_VALIDATE, '', 'login'),
-//        array('captcha', 'require', '验证码必填', self::MUST_VALIDATE, '', 'login'),
-//        array('captcha', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback', 'login'),
+        array('username', 'require', '用户名必填', self::MUST_VALIDATE, '', 'login'),
+        array('password', 'require', '密码必填', self::MUST_VALIDATE, '', 'login'),
+        array('checkcode', 'require', '验证码必填', self::MUST_VALIDATE, '', 'login'),
+        array('checkcode', 'check_captcha', '验证码不正确', self::MUST_VALIDATE, 'callback', 'login'),
     );
     
     /**
@@ -62,6 +62,73 @@ class MemberModel extends \Think\Model{
             return FALSE;
         }
         return true;
+    }
+    
+    /**
+     * 会员登录
+     * @return boolean
+     */
+    public function login(){
+        //为了安全我们将用户信息都删除
+        session('MEMBER_INFO',null);
+        $request_data = $this->data;
+        //1.验证用户名是否存在
+        $userinfo = $this->getByUsername($this->data['username']);
+        if(empty($userinfo)){
+            $this->error = '用户不存在';
+            return false;
+        }
+        //2.进行密码匹配验证
+        $password = my_mcrypt($request_data['password'], $userinfo['salt']);
+        if($password != $userinfo['password']){
+            $this->error = '密码不正确';
+            return false;
+        }
+        //为了后续会话获取用户信息,我们存下来
+        session('MEMBER_INFO',$userinfo);
+        
+        //保存自动登陆信息
+        $this->_save_token($userinfo['id']);
+        if($this->_cookie2db() === false){
+            $this->error = '购物车同步失败';
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * 保存自动登录信息
+     * @param type $member_id
+     * @return boolean
+     */
+    private function _save_token($member_id){
+        //清空原有的令牌
+        $token_model = M('MemberToken');
+        cookie('AUTO_LOGIN_TOKEN',null);
+        $token_model->delete($member_id);
+        
+        //判断是否需要自动登陆
+        $remeber = I('post.remember');
+        if(!$remeber){
+            return true;
+        }
+        $data = [
+            'member_id'=>$member_id,
+            'token'=>sha1(mcrypt_create_iv(32)),
+        ];
+        //存到cookie和数据表中
+        cookie('AUTO_LOGIN_TOKEN',$data,604800);
+        return $token_model->add($data);
+    }
+    
+    /**
+     * 同步购物车
+     * @return type
+     */
+    private function _cookie2db(){
+        //将用户的cookie购物车保存到数据库中
+        $shopping_car_model = D('ShoppingCar');
+        return $shopping_car_model->cookie2db();
     }
     
     /**
@@ -129,4 +196,29 @@ BODY;
             return false;
         }
     }
+    
+    /**
+     * 自动登录
+     */
+    public function autoLogin() {
+        $data = cookie('AUTO_LOGIN_TOKEN');
+        if(empty($data)){
+            return false;
+        }
+        $token_model = M("MemberToken");
+        // 如果cookie中保存的token信息错误
+        if(!$token_model->where($data)->count()){
+            return false;
+        }
+        // 重新保存token
+        if($this->_save_token($data['member_id']) === false){
+            return false;
+        }else{
+            // 保存用户信息到session,包括基本信息,权限信息
+            $userinfo = $this->find($data['member_id']);
+            session('MEMBER_INFO', $userinfo);
+            return TRUE;
+        }
+    }
+    
 }

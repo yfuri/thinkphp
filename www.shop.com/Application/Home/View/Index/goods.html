@@ -19,6 +19,12 @@
                 zoomWidth: 400,
                 zoomHeight: 400
             });
+            //获取点击数
+            var url = '{:U("Index/getGoodsClickTimes")}';
+            var data = {goods_id:{$row.id}};
+            $.getJSON(url,data,function(response){
+                $('#click_times').text(response.click_times);
+            });
         });
     </script>
 </block>
@@ -136,8 +142,8 @@
                 <!-- 图片预览区域 start -->
                 <div class="preview fl">
                     <div class="midpic">
-                        <a href="__IMAGES__/preview_l1.jpg" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-                            <img src="__IMAGES__/preview_m1.jpg" alt="" />               <!-- 第一幅图片的中图 -->
+                        <a href="__UPLOAD_URL_PREFIX__/{$row.galleries.0}-l" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
+                            <img src="__UPLOAD_URL_PREFIX__/{$row.galleries.0}-m" alt="" />               <!-- 第一幅图片的中图 -->
                         </a>
                     </div>
 
@@ -148,47 +154,12 @@
                         <a href="javascript:;" id="forward" class="on"></a>
                         <div class="smallpic_wrap">
                             <ul>
-                                <li class="cur">
-                                    <a class="zoomThumbActive" href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m1.jpg',largeimage: '__IMAGES__/preview_l1.jpg'}"><img src="__IMAGES__/preview_s1.jpg"></a>
+                                <foreach name="row.galleries" item="gallery">
+                                <li <eq name="key" value="0">class="cur"</eq>>
+                                    <a <eq name="key" value="0">class="zoomThumbActive"</eq>href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '__UPLOAD_URL_PREFIX__/{$gallery}-m',largeimage: '__UPLOAD_URL_PREFIX__/{$gallery}-l'}"><img src="__UPLOAD_URL_PREFIX__/{$gallery}-s"></a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0);" rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m2.jpg',largeimage: '__IMAGES__/preview_l2.jpg'}"><img src="__IMAGES__/preview_s2.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m3.jpg',largeimage: '__IMAGES__/preview_l3.jpg'}">  
-                                        <img src="__IMAGES__/preview_s3.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m4.jpg',largeimage: '__IMAGES__/preview_l4.jpg'}">  
-                                        <img src="__IMAGES__/preview_s4.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m5.jpg',largeimage: '__IMAGES__/preview_l5.jpg'}">  
-                                        <img src="__IMAGES__/preview_s5.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m6.jpg',largeimage: '__IMAGES__/preview_l6.jpg'}">  
-                                        <img src="__IMAGES__/preview_s6.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m7.jpg',largeimage: '__IMAGES__/preview_l7.jpg'}">  
-                                        <img src="__IMAGES__/preview_s7.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m8.jpg',largeimage: '__IMAGES__/preview_l8.jpg'}">  
-                                        <img src="__IMAGES__/preview_s8.jpg"></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" 
-                                       rel="{gallery: 'gal1', smallimage: '__IMAGES__/preview_m9.jpg',largeimage: '__IMAGES__/preview_l9.jpg'}">  
-                                        <img src="__IMAGES__/preview_s9.jpg"></a>
-                                </li>
+
+                                </foreach>
                             </ul>
                         </div>
 
@@ -203,8 +174,9 @@
                         <li class="market_price"><span>定价：</span><em>￥{$row.market_price}</em></li>
                         <li class="shop_price"><span>本店价：</span> <strong>￥{$row.shop_price}</strong> <a href="">(降价通知)</a></li>
                         <li><span>上架时间：</span>{$row.inputtime|date="Y-m-d H:i:s",###}</li>
+                        <li><span>点击次数：</span><span id='click_times' style='text-align: left;'></span></li>
                     </ul>
-                    <form action="" method="post" class="choose">
+                    <form action="{:U('Index/add2Car')}" method="post" class="choose">
                         <ul>
 
                             <li>
@@ -222,6 +194,7 @@
                                 <dl>
                                     <dt>&nbsp;</dt>
                                     <dd>
+                                        <input type='hidden' name='goods_id' value="{$row.id}"/>
                                         <input type="submit" value="" class="add_btn" />
                                     </dd>
                                 </dl>

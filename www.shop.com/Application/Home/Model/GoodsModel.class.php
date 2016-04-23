@@ -51,4 +51,32 @@ class GoodsModel extends \Think\Model{
 
         return $row;
     }
+    
+    /**
+     * 获取商品点击数,并且保存到数据库中
+     * @param type $goods_id
+     * @return int
+     */
+    public function getGoodsClick($goods_id){
+        $goods_click_model = M('GoodsClick');
+        $count =$goods_click_model->getFieldByGoodsId($goods_id,'click_times');
+        if(empty($count)){
+            $goods_click_model->add(['goods_id'=>$goods_id,'click_times'=>1]);
+            return 1;
+        } else{
+            $goods_click_model->where(['goods_id'=>$goods_id])->setInc('click_times', 1);
+            return $count;
+        }
+    }
+    
+    /**
+     * 从redis中获取商品的点击数,商品的点击数存放在goods_click的hash中
+     * @param type $goods_id
+     * @return type
+     */
+    public function getGoodsClickFromRedis($goods_id){
+        $key = 'goods_click';
+        $redis = get_redis();
+        return $redis->hIncrBy($key,$goods_id,1);
+    }
 }

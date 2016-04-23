@@ -90,4 +90,46 @@ class MemberController extends \Think\Controller{
         }
         $this->success('激活成功,请登录',U('login'));
     }
+    
+    /**
+     * 前台会员登陆
+     */
+    public function login(){
+        if(IS_POST){
+            //收集数据
+            if($this->_model->create('','login') === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            //执行修改
+            if(($password = $this->_model->login()) === false){
+                $this->error(get_error($this->_model->getError()));
+            }
+            
+            //跳转
+            $this->success('登陆成功',U('Index/index'));
+        }else{
+            $this->display();
+        }
+    }
+    
+    
+    /**
+     * 退出
+     */
+    public function logout(){
+        session(null);
+        cookie(null);
+        $this->success('退出成功',U('login'));
+    }
+    
+    
+    public function getmemberInfo() {
+        if($member_info = session("MEMBER_INFO")){
+            $member['id'] = $member_info['id'];
+            $member['name'] = $member_info['username'];
+            $this->ajaxReturn($member);
+        }else{
+            $this->ajaxReturn(false);
+        }
+    }
 }
